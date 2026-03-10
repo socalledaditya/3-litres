@@ -2,6 +2,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const waterLevel_box = document.querySelector(".waterLevel-box");
   const waterContainer = document.querySelector(".container");
   const water_qtys = document.querySelectorAll(".water-qty");
+  const resets = document.querySelectorAll(".resetLevel-btn");
+  const main = document.querySelector("main");
+  const goalSection = document.querySelector(".goal-achieved-section");
   const targetWater = 3000;
   function getWaterLevelData() {
     return JSON.parse(localStorage.getItem("waterLevelData"));
@@ -20,8 +23,8 @@ document.addEventListener("DOMContentLoaded", () => {
     setWaterLevelData(waterLevelData);
     waterLevel_box.style.height = `${(waterLevelData.waterLevel / targetWater) * 100}%`;
   }
-  if (waterLevelData.waterLevel >= 3000) {
-    waterLevel_box.style.height = "100%";
+  if (waterLevelData) {
+    waterLevel_box.style.height = `${(waterLevelData.waterLevel / targetWater) * 100}%`;
   }
   waterContainer.addEventListener("click", () => {
     let currentWaterLevel = waterLevelData.waterLevel;
@@ -33,9 +36,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (currentWaterLevel >= 3000) {
       waterLevel_box.style.height = "100%";
+      main.style.display = "none";
+      goalSection.style.transform = "translateY(15vh)";
     }
-
-    console.log(currentWaterLevel);
   });
 
   water_qtys.forEach((water_qty) => {
@@ -50,8 +53,19 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       if (currentWaterLevel >= 3000) {
         waterLevel_box.style.height = "100%";
+        main.style.display = "none";
+        goalSection.style.transform = "translateY(15vh)";
       }
-      console.log(qtyValue);
+    });
+  });
+
+  resets.forEach((resetBtn) => {
+    resetBtn.addEventListener("click", () => {
+      goalSection.style.transform = "translateY(-100%)";
+      waterLevelData.waterLevel = 0;
+      setWaterLevelData(waterLevelData);
+      waterLevel_box.style.height = "0%";
+      main.style.display = "flex";
     });
   });
 });
