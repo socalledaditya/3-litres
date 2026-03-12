@@ -59,13 +59,5 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  resets.forEach((resetBtn) => {
-    resetBtn.addEventListener("click", () => {
-      goalSection.style.transform = "translateY(-100%)";
-      waterLevelData.waterLevel = 0;
-      setWaterLevelData(waterLevelData);
-      waterLevel_box.style.height = "0%";
-      main.style.display = "flex";
-    });
-  });
+  
 });
