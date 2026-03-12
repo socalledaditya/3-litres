@@ -6,6 +6,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const main = document.querySelector("main");
   const goalSection = document.querySelector(".goal-achieved-section");
   const targetWater = 3000;
+
+  const streakDisplay = document.getElementById('streak-count');
+  const RESET_TIME_MS = 2 * 24 * 60 * 60 * 1000;
+  // const RESET_TIME_MS = 5000; //for testing
+
+  let currentStreak = parseInt(localStorage.getItem('streakCount')) || 0;
+  let lastWin = parseInt(localStorage.getItem('lastWinTime')) || 0;
+  
   function getWaterLevelData() {
     return JSON.parse(localStorage.getItem("waterLevelData"));
   }
@@ -59,13 +67,44 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  resets.forEach((resetBtn) => {
-    resetBtn.addEventListener("click", () => {
-      goalSection.style.transform = "translateY(-100%)";
-      waterLevelData.waterLevel = 0;
-      setWaterLevelData(waterLevelData);
-      waterLevel_box.style.height = "0%";
-      main.style.display = "flex";
-    });
+  function updateDisplay() {
+    streakDisplay.textContent = currentStreak;
+  }
+
+  function checkReset() {
+    const now = Date.now();
+    if (lastWin > 0 && (now - lastWin) >= RESET_TIME_MS) {
+        currentStreak = 0;
+        localStorage.setItem('streakCount', currentStreak);
+    }
+    updateDisplay();
+}
+
+checkReset();
+
+resets.forEach((resetBtn) => {
+  resetBtn.addEventListener("click", () => {
+    const now = Date.now();
+    
+    if (lastWin > 0 && (now - lastWin) >= RESET_TIME_MS) {
+        currentStreak = 0;
+    }
+
+    currentStreak++;
+    lastWin = now;
+
+    localStorage.setItem('streakCount', currentStreak);
+    localStorage.setItem('lastWinTime', lastWin);
+
+    updateDisplay();
+
+    goalSection.style.transform = "translateY(-100%)";
+    waterLevelData.waterLevel = 0;
+    setWaterLevelData(waterLevelData);
+    waterLevel_box.style.height = "0%";
+    main.style.display = "flex";
   });
+});
+
+setInterval(checkReset, 60000);
 });
